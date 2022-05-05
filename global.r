@@ -43,28 +43,28 @@ library("MASS")
 library("BBmisc") # is.error
 
 TCGA_GBM_u133a_overall= readRDS(
-  "data/TCGA_GBM_u133a_overall.rds"
+  "Data/TCGA_GBM_u133a_overall.rds"
 )
 # read in GBM rna seq data: 
 TCGA_GBM_rna_seq_overall = readRDS(
-  "data/TCGA_GBM_rna_seq_overall.rds"
+  "Data/TCGA_GBM_rna_seq_overall.rds"
 )
 #RNAoverallgenenames <- colnames(TCGA_GBM_rna_seq_overall)[1:20028]
 #check how many columns are numeric:
 #dim(dplyr::select_if(TCGA_GBM_rna_seq_overall[,1:20028], is.numeric))
 
 # read in GBM agilent data:
-TCGA_GBM_agilent_overall=readRDS("data/TCGA_GBM_agilent_overall.rds")
+TCGA_GBM_agilent_overall=readRDS("Data/TCGA_GBM_agilent_overall.rds")
 #agilentoverallgenenames <- colnames(TCGA_GBM_agilent_overall)[1:17814]
 # read in LGG data:(" https://cran.r-project.org/src/contrib/Archive/RcppArmadillo/RcppArmadillo_0.6.100.0.0.tar.gz  repos=NULL, type="source")
-TCGA_LGG_overall=readRDS("data/TCGA_LGG_overall.rds")
+TCGA_LGG_overall=readRDS("Data/TCGA_LGG_overall.rds")
 dim(dplyr::select_if(TCGA_LGG_overall[,1:20225], is.numeric))
 
-Ivygap=readRDS("data/IvyGAP_gene_expression.rds")
+Ivygap=readRDS("Data/IvyGAP_gene_expression.rds")
 
-U133aoverallgenenames <- read.csv("data/U133aoverallgenenames.csv")
-RNAoverallgenenames <- read.csv("data/RNAoverallgenenames.csv")
-agilentoverallgenenames <- read.csv("data/agilentoverallgenenames.csv")
-lggoverallgenenames <- read.csv("data/lggoverallgenenames.csv")
+U133aoverallgenenames <- read.csv("Data/U133aoverallgenenames.csv")
+RNAoverallgenenames <- read.csv("Data/RNAoverallgenenames.csv")
+agilentoverallgenenames <- read.csv("Data/agilentoverallgenenames.csv")
+lggoverallgenenames <- read.csv("Data/lggoverallgenenames.csv")
 ivygapgenenames<-read.csv("data/ivygapgenenames.csv")
 
