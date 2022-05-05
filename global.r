@@ -60,7 +60,7 @@ TCGA_GBM_agilent_overall=readRDS("data/TCGA_GBM_agilent_overall.rds")
 TCGA_LGG_overall=readRDS("data/TCGA_LGG_overall.rds")
 dim(dplyr::select_if(TCGA_LGG_overall[,1:20225], is.numeric))
 
-Ivygap=readRDS("data/all_numeric.rds")
+Ivygap=readRDS("data/IvyGAP_gene_expression.rds")
 
 U133aoverallgenenames <- read.csv("data/U133aoverallgenenames.csv")
 RNAoverallgenenames <- read.csv("data/RNAoverallgenenames.csv")
