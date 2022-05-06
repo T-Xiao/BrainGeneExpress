@@ -13,8 +13,8 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 > IvyGAP data (270 patients, 25873 genes, no clinical factors); <br/>
 > TCGA - The Cancer Genome Atlas;  GBM - Glioblastoma; LGG - Low Grade Glioma<br/>
 * Modules include: 
-> (1) Correlation: <br/>
-> > (1.1) One vs Many:<br/>
+> (1) Correlation: <br/> 
+> > (1.1) One vs Many: Pearson Correlations between one gene and several other genes of choice. Correlation plots will be shown as several one-on-one correlations. <br/>
 > > (1.2) One vs All:<br/>
 > > (1.3) Two sets:<br/>
 
