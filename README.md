@@ -43,5 +43,5 @@ Ting Xiao
 TBD
 
 ## Data Sources
-* [Xenabrowser](https://xenabrowser.net/datapages/?cohort=TCGA%20Glioblastoma%20(GBM)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443)
+* [TCGA data from Xenabrowser](https://xenabrowser.net/datapages/?cohort=TCGA%20Glioblastoma%20(GBM)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443)
 * [IvyGap](https://glioblastoma.alleninstitute.org/static/download.html)
