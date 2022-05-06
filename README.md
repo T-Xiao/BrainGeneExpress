@@ -1,10 +1,20 @@
 # BrainGeneExpress
 
-An Rshiny app for quick analysis of Brain Tumor public datasets 
+An RShiny app for quick analysis of Brain Tumor public datasets 
 
 ## Description
 
-Data sources: https://xenabrowser.net/datapages/?cohort=TCGA%20Glioblastoma%20(GBM)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443
+* The goal of this app is to help Brain Tumor researchers do quick research of the gene(s) in public Brain Tumor datasets.
+* Datasets include: 
+> TCGA (The Cancer Genome Atlas) GBM (Glioblastoma) Agilent data (585 patients, 17.. genes, clinical variables); <br/>
+> TCGA GBM U133a Affymetrix data (539 patients, 12... genes, clinical variables); <br/>
+> TCGA GBM RNA seq data (172 patients, 17... genes, clinical variables); <br/>
+> TCGA LGG (Low Grade Glioma) data; <br/>
+> IvyGap data; <br/>
+* Modules include: (1) Correlation: 
+                   (2) Multivariate analysis:
+                   (3) Univariate analysis: 
+
 
 ## Getting Started
 
@@ -15,16 +25,11 @@ Data sources: https://xenabrowser.net/datapages/?cohort=TCGA%20Glioblastoma%20(G
 ### Installing
 
 * Download R: Windows -- https://cran.r-project.org/bin/windows/base/. 
-* Download R: Mac -- 
+* Download R: Mac -- https://cran.r-project.org/bin/macosx/
 * Download RStudio Desktop: https://www.rstudio.com/products/rstudio/download/
 
 ### Executing program
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
 
 ## Help
 
@@ -35,28 +40,16 @@ command to run if program contains helper info
 
 ## Authors
 
-Contributors names and contact info
-
-ex. Dominique Pizzie  
-ex. [@DomPizzie](https://twitter.com/dompizzie)
+Ting Xiao
 
 ## Version History
 
-* 0.2
-    * Various bug fixes and optimizations
-    * See [commit change]() or See [release history]()
-* 0.1
-    * Initial Release
+* Initial Release
 
 ## License
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+TBD
 
-## Acknowledgments
-
-Inspiration, code snippets, etc.
+## Data Sources
 * [Xenabrowser](https://xenabrowser.net/datapages/?cohort=TCGA%20Glioblastoma%20(GBM)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443)
-* [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [dbader](https://github.com/dbader/readme-template)
-* [zenorocha](https://gist.github.com/zenorocha/4526327)
-* [fvcproductions](https://gist.github.com/fvcproductions/1bfc2d4aecb01a834b46)
+* [IvyGap](https://glioblastoma.alleninstitute.org/static/download.html)
