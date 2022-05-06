@@ -1,6 +1,7 @@
 shinyServer(function(input, output, session) {
-  ### Correlation tab:
-  # Load correlation databases according to users' choice:
+  ###################################### Tab/Module-- Correlation Analysis#########################################################
+  ## Step 1 Load data: 
+  #      1.1 Load correlation databases according to users' choice:
   correlation_database <- eventReactive(input$correl,
                                         isolate({
                                           if (input$database_corr == "TCGA GBM U133a") {
@@ -16,7 +17,7 @@ shinyServer(function(input, output, session) {
                                           }
                                           return(corr_database)
                                         }))
-  # Load different gene name lists for different data sets:
+  #      1.2 Load different gene name lists for different data sets:
   datasetInput <- reactive({
     switch(
       input$database_corr,
@@ -27,7 +28,8 @@ shinyServer(function(input, output, session) {
       "IvyGAP" = ivygapgenenames
     )
   })
-  ## One vs many correlation dataset input:
+  ## Step 2 Get user input:
+  #      2.1 One vs many correlation dataset user input:
   output$onemanyone = renderUI({
     mydata = datasetInput()
     selectInput('onemanyone', 'Select One Gene', mydata)
@@ -42,10 +44,10 @@ shinyServer(function(input, output, session) {
       multiple = TRUE
     )
   })
-  ## one vs all correlation dataset input:
+  #      2.2 One vs all correlation dataset user input:
   output$oneallone = renderUI({
     mydata = datasetInput()
-    #adding a div to 
+    #adding a div: 
     div(selectInput("oneall", "Please select one genes:", mydata),
     selectInput("type_of_coef","Please select the type of correlation coefficient",c("pearson","spearman","kendall")),
    # sliderInput("cut_off_coef","Please select the cut-off correlation coefficient:", min=-1,max=1,value=c(-1,1),step=0.1),
@@ -64,7 +66,7 @@ shinyServer(function(input, output, session) {
     #                                     # sliderInput("cut_off_number","Please select the cut-off number of genes:",min = 0, max = 500,
     #                                     #             value = c(0,100))),
   })
-  ## two sets correlation dataset input:
+  #      2.3 Two sets correlation dataset user input (three inputs):
   output$twosetone = renderUI({
     mydata = datasetInput()
     selectInput(
@@ -97,7 +99,8 @@ shinyServer(function(input, output, session) {
       options = list(maxItems = 3)
     )
   })
-  ## one vs many plot:
+  ## Step 3 Render plots:
+  #       3.1 one vs many plot:
   output$ffplot <- renderPlot({
     corr_database = correlation_database()
     one_gene = input$onemanyone
@@ -148,7 +151,7 @@ shinyServer(function(input, output, session) {
     plotgene
     grid.arrange(grobs = plotgene, ncol = 3)
   })
-  ##one vs all plots:
+  #       3.2 one vs all plots:
   one_vs_all <- eventReactive(input$correl,
                               isolate({
                                 corr_database = correlation_database()
@@ -195,25 +198,23 @@ shinyServer(function(input, output, session) {
                              which(algorithms%in%"Affinity-Propagation"),which(algorithms%in%"Gaussian-Mixture-Mode"),
                              which(algorithms%in%"Fuzzy-C-Means-Clustering"),which(algorithms%in%"HDBSCAN")),
                              c("hc","km","diana","pam","ap","gmm","cmeans","hdbscan"))
-    
+   # diceR package: Diverse Cluster Ensemble in R (https://cran.r-project.org/web/packages/diceR/diceR.pdf)
     diceR_result <- dice(as.matrix(heatmap1),nk=nkrange,algorithms =unlist(algorithms_replaced), reps=10,
-                                        #hc.method = input$hc_method,
-                                         #distance = input$hc_metric, 
+                                         hc.method = input$hc_method,
+                                         distance = input$hc_metric, 
                                          cons.funs = c( "majority", "CSPA","LCE"), 
                                          sim.mat=c("cts"),
                                          prep.data = c("full"),
-                                          min.var = 1, seed = 1,
+                                         min.var = 1, seed = 1,
                                          trim = TRUE, reweigh = TRUE, evaluate = FALSE,n=6,
                                          plot = FALSE, ref.cl = NULL, progress = TRUE)
     clus_gene_exp <- merge(heatmap1,diceR_result$clusters[,1],by="row.names")
     clus_gene_exp_final <- clus_gene_exp %>% .[order(.$y),] %>% set_rownames(.$Row.names) %>% dplyr::select(-Row.names)
     pheatmap(clus_gene_exp_final,cluster_rows = FALSE,cluster_cols = FALSE,scale="column",show_colnames=FALSE,fontsize_row=4)
-    
   })
-  ## Two gene sets canonical correlation:
-  ## We need both cancor file and
-  #Create a cancor file for table and plot; a CanCorr.r file for table
-  #Extract Two gene sets:
+  #       3.3 Two gene sets canonical correlation:
+  #  We need both cancor file and Create a cancor file for table and plot; a CanCorr.r file for table
+  #  Extract Two gene sets:
   twogenesets <- reactive({
     TCGA = correlation_database()
     split3 = strsplit(input$Two_sets_one, " ")
@@ -221,8 +222,7 @@ shinyServer(function(input, output, session) {
     split4 = strsplit(input$Two_sets_two, " ")
     return (list(split3, split4))
   })
-  # Generate candisc::cancor file, yacca::cca file and yacca:F.test.cca file to
-  # be used:
+  # Generate candisc::cancor file, yacca::cca file and yacca:F.test.cca file to be used:
   cancorreact <- reactive({
     corr_database = correlation_database()
     X <- twogenesets()[[1]]
@@ -379,7 +379,11 @@ shinyServer(function(input, output, session) {
       plot(cca, which = strtoi(input$canodim[1]))
     }
   })
-  ### Multivariable Tab
+  
+  ###################################### Tab/Module-- Multivariate Analysis#########################################################
+  output$text3 <-
+    renderText("Cox Proportional Hazards Model")
+  # Step 1: To make the button reactive when clicked: calculatecox & sfreact
   calcultatecox <-eventReactive(input$coxcalc,
                                 isolate({if (input$Database == "TCGA GBM RNA-Seq") {
                                   TCGA = TCGA_GBM_rna_seq_overall
@@ -393,12 +397,9 @@ shinyServer(function(input, output, session) {
                                   #print (TCGA[,1])
                                   return(list(TCGA, target))
                                 }))
-  output$text3 <-
-    renderText("Cox Proportional Hazards Model")
   sfreact <- reactive({
     input$coxcalc
     isolate({TCGA = calcultatecox()[[1]]
-    #print (TCGA[,1])
     TCGA$target_gene = calcultatecox()[[2]]
     if (input$Database == "TCGA GBM RNA-Seq") {
       targetname = input$Multigene2
@@ -443,9 +444,6 @@ shinyServer(function(input, output, session) {
         }
       }
     }
-    print(targetname)
-    #sum(TCGA_GBM_rna_seq_overall$RNF17)
-    
     split_factor = strsplit(as.character(input$ClinicalFactor), " ")
     split_cont = strsplit(as.character(Othergenes), " ")
     
@@ -897,31 +895,24 @@ shinyServer(function(input, output, session) {
     
     })
   })
+  # Step 2: Output: 
+  #      2.1 Hazard Ratio Table: 
   output$TCGAtable <- renderTable({
-    ## if rcs is selected:
-    #if input$Model==With Restricted Cubic Spline
+    #if rcs is selected: if input$Model==With Restricted Cubic Spline
     input$coxcalc
     isolate({
       final_formu = sfreact()$final_formu
-      # rcslist = sfreact()[[2]]
-      #print (rcslist)
       a = sfreact()$a
       varlist = sfreact()$varlist
-      
       #validate( need(input$VariableSelection =="No selection","No variable left after model selection!") )
-      
       TCGA = calcultatecox()[[1]]
-      #print (TCGA[,1])
       TCGA$target_gene = calcultatecox()[[2]]
-      
-      # TCGA$target_gene = calcultatecox()
       medianSelected = median(TCGA$target_gene)
       if (input$Database == "TCGA GBM RNA-Seq") {
         targetname = input$Multigene2
         Othergenes = input$Othergenes2
         TCGAname = rep("TCGA", 20028)
         medianSelected = median(TCGA$target_gene)
-        
         for (i in 1:172) {
           if (TCGA$target_gene[i] < medianSelected) {
             TCGA$Target_Gene_Stratified[i] = "LOW"
@@ -934,7 +925,6 @@ shinyServer(function(input, output, session) {
         targetname = input$Multigene
         Othergenes = input$Othergenes
         TCGAname = rep("TCGA", 12042)
-        
         medianSelected = median(TCGA$target_gene)
         for (i in 1:539) {
           if (TCGA$target_gene[i] < medianSelected) {
@@ -1022,6 +1012,7 @@ shinyServer(function(input, output, session) {
       }
       finaldf})
   })
+  #      2.2 Hazard Ratio Plot:
   output$TCGAplot <- renderPlot({ 
     #if input$Model==With Restricted Cubic Spline
     input$coxcalc
@@ -1097,6 +1088,7 @@ shinyServer(function(input, output, session) {
       plot(ssf)
     })
   })
+  #      2.3 One and two years prediction:
   output$Predplot1 <- renderPlot({
     #TCGA$target_gene = calcultatecox()
     input$coxcalc
@@ -1188,10 +1180,9 @@ shinyServer(function(input, output, session) {
       grid.arrange(p1, p2, nrow = 1, ncol = 3)
     })
   })
-  #output$ui<-renderUI({
+  #      2.4 Point Prediction: input & output plot
   observe({
     final_formu = sfreact()$final_formu
-    
     a = sfreact()$a
     varlist = sfreact()$varlist
     #print (varlist)
@@ -1223,32 +1214,20 @@ shinyServer(function(input, output, session) {
     # df[1,]=unlist(y)})
     #})
   })
-  
-  
   output$Predplot2 <- renderPlot({
-    #if input$Model==With Restricted Cubic Spline
-    #print (TCGA$Time_To_Event)
     input$coxcalc
     isolate({
       final_formu = sfreact()$final_formu
       print (final_formu)
-      # rcslist = sfreact()[[2]]
-      #print (rcslist)
       a = sfreact()$a
       varlist = sfreact()$varlist
-      #formu=paste("Surv(Time_To_Event, Event)~", unlist(varlist),collapse = "+",sep = "")
-      #print (formu)
-      # TCGA$target_gene = calcultatecox()
       TCGA = calcultatecox()[[1]]
-      #print (TCGA[,1])
       TCGA$target_gene = calcultatecox()[[2]]
-      
       if (input$Database == "TCGA GBM RNA-Seq") {
         targetname = input$Multigene2
         Othergenes = input$Othergenes2
         TCGAname = rep("TCGA", 20028)
         medianSelected = median(TCGA$target_gene)
-        
         for (i in 1:172) {
           if (TCGA$target_gene[i] < medianSelected) {
             TCGA$Target_Gene_Stratified[i] = "LOW"
@@ -1275,7 +1254,6 @@ shinyServer(function(input, output, session) {
         targetname = input$Multigene3
         Othergenes = input$Othergenes3
         TCGAname = rep("TCGA", 17814)
-        
         medianSelected = median(TCGA$target_gene)
         for (i in 1:585) {
           if (TCGA$target_gene[i] < medianSelected) {
@@ -1288,13 +1266,8 @@ shinyServer(function(input, output, session) {
       }
       
       datalist = strsplit(as.character(req(input$inText)), " ")
-      #print (datalist)
       mat.or.vec(3, 2)
       newdataframe = data.frame(mat.or.vec(1, length(varlist[[1]])))
-      
-      # newdataframe= data.frame(matrix(,nrow=1,ncol=length(varlist[[1]])))
-      #print (length(varlist))
-      # print (length(varlist[[1]]))
       for (i in (1:length(varlist[[1]]))) {
         colnames(newdataframe)[i] <- varlist[[1]][i]
       }
@@ -1317,17 +1290,8 @@ shinyServer(function(input, output, session) {
           newdataframe[1, i] = as.numeric(datalist[[1]][i])
         }
       }
-      #print (length(datalist[[1]]))
-      #print (str(newdataframe[1,5]))
-      # for (i in 1:length(datalist[[1]])){
-      # newdataframe[1,i]=unlist(datalist[[1]][i])
-      # }
-      #strsplit(as.character(input$inText2), " ")
-      #print (typeof(newdataframe[1,5]))
+
       print (newdataframe)
-      #print (varlist[[1]][1])
-      #rcs or not:
-      #if if (length(grep ("\\<rcs\\>", formula))>0){
       f = plot(
         survfit(cph(
           as.formula(final_formu), TCGA, x = TRUE, y = TRUE
@@ -1344,13 +1308,10 @@ shinyServer(function(input, output, session) {
         lty = c(1:2),
         col = c("red", "green")
       )
-      
     })
   })
-  #   input$inText2<-"Hello"
-  # )
-  ###################################### Module-- Univariate Analysis#########################################################
-  ## 20180131: Two plots, so we need to have a reactive function
+  ###################################### Tab/Module-- Univariate Analysis#########################################################
+  ## Step 1 Load data and : (There're two plot, so we need to have a reactive function)
   calcultate_uni <-eventReactive(input$Uni_cox,
                                 isolate({if (input$Databases == "TCGA GBM RNA-Seq") {
                                   TCGA = TCGA_GBM_rna_seq_overall
@@ -1360,30 +1321,23 @@ shinyServer(function(input, output, session) {
                                   TCGA = TCGA_GBM_u133a_overall
                                   target = TCGA[, input$Unigene]
                                   name = input$Unigene
-                                
                                 } else if (input$Database == "TCGA GBM Agilent") {
                                   TCGA = TCGA_GBM_agilent_overall
                                   target = TCGA[, input$Unigene3]
                                   name = input$Unigene3
                                 }
-                                  #print (TCGA[,1])
                                   return(list(TCGA, target,name))
                                 }))
-  
+  # Step 2 Rpart (:https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf
   recursive_tfit <- reactive({
     input$Uni_cox
     isolate({TCGA = calcultate_uni()[[1]]
-    #print (TCGA[,1])
     TCGA$target = calcultate_uni()[[2]]
     tfit = rpart(formula = Surv(Time_To_Event, event = Event) ~ target, data = TCGA, control=rpart.control(minsplit=30, cp=0.01))
     return (tfit)
     })
   })
-#   recursive_tfit <- reactive({
-#     TCGA = correlation_database()
-#     selected_gene=TCGA[,input$Unigene]
-#     tfit = rpart(formula = Surv(Time_To_Event, event = Event) ~ selected_gene, data = TCGA, control=rpart.control(minsplit=30, cp=0.01))
-#   })
+  #Step 3 Output the decision tree plot & Kaplan-Meier plot for high-low (the first cutoff by the decision tree plot)
   output$recurplot<-renderPlot({
     tfit2<-as.party(recursive_tfit())
     plot(tfit2,
@@ -1391,44 +1345,29 @@ shinyServer(function(input, output, session) {
   })
   output$uniplot <- renderPlot({
     TCGA = calcultate_uni()[[1]]
-    #print (TCGA[,1])
     target_gene2 = calcultate_uni()[[2]]
     name = calcultate_uni()[[3]]
     tfit=recursive_tfit()
-    #tfit = rpart(formula = Surv(TIME_TO_EVENT, event = EVENT) ~ selected_gene, data = TCGA, control=rpart.control(minsplit=30, cp=0.01))
-    #tfit2 <- as.party(tfit)
-    #plot(tfit2,
-    #main="Conditional Inference Tree Plot")
     splitpoint=tfit$splits[1,4]
     TCGA[,"Split"]=NA
     TCGA$Split[which(target_gene2>splitpoint)]="High"
     TCGA$Split[which(target_gene2<=splitpoint)]="Low"
-    #TCGA$Split=as.factor(TCGA$Split)
     print(TCGA$Split)
     km.by.split<- survfit(Surv(Time_To_Event,  Event) ~ Split, data = TCGA)
-    #print(km.by.split)
     ggsurv=ggsurvplot(km.by.split, TCGA, # Change legends: title & labels
                       legend.title = name,
                       legend.labs = c("LOW", "HIGH"),
-                      # Add p-value and tervals
                       pval = TRUE,
                       pval.method = TRUE,
-                      log.rank.weights="n",
-                      #pval.method.size=TRUE,
-                      #conf.int = TRUE,
-                      # Add risk table
+                      log.rank.weights="1",
                       risk.table = TRUE,
                       surv.scale="percent",
                       tables.height = 0.2,
                       tables.theme = theme_cleantable(),
-                      # Color palettes. Use custom color: c("#E7B800", "#2E9FDF"),
-                      # or brewer color (e.g.: "Dark2"), or ggsci color (e.g.: "jco")
                       palette = c( "#2E9FDF","#E7B800"),
                       font.x = 12, font.y = 12, font.main = 14, ylab = "% Surviving",
                       title = "Kaplan Meier Survival Estimates for selected gene high vs low")
     ggsurv$plot=ggsurv$plot+theme(plot.title = element_text(hjust = 0.5))
     print(ggsurv)
-    
   })
 })
-
