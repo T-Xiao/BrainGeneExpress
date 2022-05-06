@@ -6,10 +6,10 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 
 * The goal of this app is to help Brain Tumor researchers do quick research of the gene(s) in public Brain Tumor datasets.
 * Datasets include: 
-> TCGA GBM Agilent data(585 patients, 17814 genes, clinical factors, 17 patients with Event & Time to event info missing); <br/>
-> TCGA GBM U133a Affymetrix data (539 patients, 12042 genes, 11 clinical factors, 16 patients with Event & Time to event info missing); <br/>
+> TCGA GBM Agilent data(585 patients, 17814 genes, clinical factors, 17 patients with Event & Time to event info missing; <br/>
+> TCGA GBM U133a Affymetrix data(539 patients, 12042 genes, 11 clinical factors, 16 patients with Event & Time to event info missing); <br/>
 > TCGA GBM RNA seq data (172 patients, 20028 genes, 11 clinical factors, 7 patients with Event & Time to event info missing); <br/>
-> TCGA LGG  data（12042 genes, 11 clinical factors, 16 patients with Event & Time to event info missing); <br/>
+> TCGA LGG  data（525 patients, 12042 genes, 11 clinical factors, 16 patients with Event & Time to event info missing); <br/>
 > IvyGap data; <br/>
 > TCGA - The Cancer Genome Atlas;  GBM - Glioblastoma; LGG - Low Grade Glioma<br/>
 * Modules include: (1) Correlation: 
@@ -29,16 +29,6 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 * Download R: Windows -- https://cran.r-project.org/bin/windows/base/. 
 * Download R: Mac -- https://cran.r-project.org/bin/macosx/
 * Download RStudio Desktop: https://www.rstudio.com/products/rstudio/download/
-
-### Executing program
-
-
-## Help
-
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
 
 ## Authors
 
