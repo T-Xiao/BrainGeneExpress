@@ -6,10 +6,10 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 
 * The goal of this app is to help Brain Tumor researchers do quick research of the gene(s) in public Brain Tumor datasets.
 * Datasets include: 
-> TCGA (The Cancer Genome Atlas) GBM (Glioblastoma) Agilent data (585 patients, 17.. genes, clinical variables); <br/>
-> TCGA GBM U133a Affymetrix data (539 patients, 12... genes, clinical variables); <br/>
-> TCGA GBM RNA seq data (172 patients, 17... genes, clinical variables); <br/>
-> TCGA LGG (Low Grade Glioma) data; <br/>
+> TCGA (The Cancer Genome Atlas) GBM (Glioblastoma) Agilent data (585 patients, 17.. genes, clinical factors); <br/>
+> TCGA GBM U133a Affymetrix data (539 patients, 12... genes, 11 clinical factors); <br/>
+> TCGA GBM RNA seq data (172 patients, 20028 genes, 11 clinical factors, 7 patients with Event & Time to event info missing); <br/>
+> TCGA LGG (Low Grade Glioma) data（12042 genes, 11 clinical factors, 16 patients with Event & Time to event info missing ; <br/>
 > IvyGap data; <br/>
 * Modules include: (1) Correlation: 
                    (2) Multivariate analysis:
