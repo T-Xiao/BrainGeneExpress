@@ -15,8 +15,8 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 * Modules include: 
 > (1) Correlation: <br/> 
 > > (1.1) One vs Many: Pearson Correlations between one gene and several other genes of choice. Correlation plots will be shown as several one-on-one correlations. <br/>
-> > (1.2) One vs All:<br/>
-> > (1.3) Two sets:<br/>
+> > (1.2) One vs All: Correlations of the chosen gene and all genes are calculated and sorted. The n (user can determine n) most correlated genes will be clustered and displayed in heatmap. <br/>
+> > (1.3) Two sets: Canonical correlations will be calculated for <br/> 
 
 > (2) Multivariate analysis:<br/>
 >(3) Univariate analysis: 
