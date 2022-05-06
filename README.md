@@ -10,7 +10,7 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 > TCGA GBM U133a Affymetrix data(539 patients, 12042 genes, 11 clinical factors, 16 patients with Event & Time to event info missing); <br/>
 > TCGA GBM RNA seq data (172 patients, 20028 genes, 11 clinical factors, 7 patients with Event & Time to event info missing); <br/>
 > TCGA LGG  data（525 patients, 12042 genes, 11 clinical factors, 16 patients with Event & Time to event info missing); <br/>
-> IvyGap data (270 patients, 25873 genes, no clinical factors); <br/>
+> IvyGAP data (270 patients, 25873 genes, no clinical factors); <br/>
 > TCGA - The Cancer Genome Atlas;  GBM - Glioblastoma; LGG - Low Grade Glioma<br/>
 * Modules include: (1) Correlation: 
                    (2) Multivariate analysis:
@@ -44,4 +44,4 @@ TBD
 
 ## Data Sources
 * [TCGA data from Xenabrowser](https://xenabrowser.net/datapages/?cohort=TCGA%20Glioblastoma%20(GBM)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443)
-* [IvyGap](https://glioblastoma.alleninstitute.org/static/download.html)
+* [IvyGAP](https://glioblastoma.alleninstitute.org/static/download.html)
