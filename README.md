@@ -4,21 +4,19 @@ An Rshiny app for quick analysis of Brain Tumor public datasets
 
 ## Description
 
-
 Data sources: https://xenabrowser.net/datapages/?cohort=TCGA%20Glioblastoma%20(GBM)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443
-
 
 ## Getting Started
 
 ### Dependencies
 
-* Describe any prerequisites, libraries, OS version, etc., needed before installing program.
-* ex. Windows 10
+* R and RStudio
 
 ### Installing
 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+* Download R: Windows -- https://cran.r-project.org/bin/windows/base/. 
+* Download R: Mac -- 
+* Download RStudio Desktop: https://www.rstudio.com/products/rstudio/download/
 
 ### Executing program
 
