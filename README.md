@@ -12,9 +12,14 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 > TCGA LGG  data（525 patients, 12042 genes, 11 clinical factors, 16 patients with Event & Time to event info missing); <br/>
 > IvyGAP data (270 patients, 25873 genes, no clinical factors); <br/>
 > TCGA - The Cancer Genome Atlas;  GBM - Glioblastoma; LGG - Low Grade Glioma<br/>
-* Modules include: (1) Correlation: 
-                   (2) Multivariate analysis:
-                   (3) Univariate analysis: 
+* Modules include: 
+> (1) Correlation: <br/>
+> > (1.1) One vs Many:<br/>
+> > (1.2) One vs All:<br/>
+> > (1.3) Two sets:<br/>
+
+> (2) Multivariate analysis:<br/>
+>(3) Univariate analysis: 
 
 
 
