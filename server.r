@@ -50,7 +50,6 @@ shinyServer(function(input, output, session) {
     #adding a div: 
     div(selectInput("oneall", "Please select one genes:", mydata),
     selectInput("type_of_coef","Please select the type of correlation coefficient",c("pearson","spearman","kendall")),
-   # sliderInput("cut_off_coef","Please select the cut-off correlation coefficient:", min=-1,max=1,value=c(-1,1),step=0.1),
     selectInput("method_of_ranking","Please select the ranking method of coefficient",c("Positive","Negative","Mixed")),
     numericInput("n_genes", "Enter Number of Genes (1 to 500)", min = 1, max = 500, value = 50),
     #select algorithms
@@ -106,19 +105,7 @@ shinyServer(function(input, output, session) {
     one_gene = input$onemanyone
     many_gene = strsplit(as.character(input$onemanymany), " ")
     ngenelist = length(unlist(many_gene))
-    #correlation coefficient:
-    # corr_eqn <- function(x, y, digits = 2) {
-    #   corr_coef <- round(cor(x, y), digits = digits)
-    #   paste("r", "=", corr_coef)
-    # }
-    # p_eqn <- function(x, y, digits = 4) {
-    #   p <- cor.test(x, y, method = "pearson")$p.value
-    #   txt2 <-
-    #     format(c(p, 0.123456789), digits = digits)[1]
-    #   paste("p= ", txt2, sep = "")
-    # }
     plotgene = vector("list", length = ngenelist)
-    #  print (plotgene)
     for (i in 1:ngenelist) {
       #local({
       gene_name = unlist(many_gene)[i]
@@ -130,24 +117,10 @@ shinyServer(function(input, output, session) {
         geom_smooth(method = lm) +
         ylab(one_gene) +
         xlab(gene_name) +
-        # ylim(0,1.1e5) +
         geom_cor(method = "pearson", ypos = 1e5) 
-        # geom_text(
-        #   y = max(corr_database[, one_gene]),
-        #   x = max(corr_database[, gene_name]) - 0.5,
-        #   label = corr_eqn(corr_database[, gene_name], corr_database[, one_gene])
-        # ) +
-        # geom_text(
-        #   y = max(corr_database[, one_gene]) - 0.5,
-        #   x = max(corr_database[, gene_name]) - 0.5,
-        #   label = p_eqn(corr_database[, gene_name], corr_database[, one_gene])
-        # )
+
       plotgene[[i]] = pp
-      #print(i)
-      #print(g)
-      # assign(unlist(many_gene)[i],pp,pos=1)})
     }
-    # print (length(plotgene))
     plotgene
     grid.arrange(grobs = plotgene, ncol = 3)
   })
@@ -199,14 +172,16 @@ shinyServer(function(input, output, session) {
                              which(algorithms%in%"Fuzzy-C-Means-Clustering"),which(algorithms%in%"HDBSCAN")),
                              c("hc","km","diana","pam","ap","gmm","cmeans","hdbscan"))
    # diceR package: Diverse Cluster Ensemble in R (https://cran.r-project.org/web/packages/diceR/diceR.pdf)
-    diceR_result <- dice(as.matrix(heatmap1),nk=nkrange,algorithms =unlist(algorithms_replaced), reps=10,
+    print (algorithms_replaced)
+    diceR_result <- dice(as.matrix(heatmap1),nk=nkrange,
+                         algorithms =unlist(algorithms_replaced), reps=10,
                                          hc.method = input$hc_method,
                                          distance = input$hc_metric, 
                                          cons.funs = c( "majority", "CSPA","LCE"), 
                                          sim.mat=c("cts"),
                                          prep.data = c("full"),
                                          min.var = 1, seed = 1,
-                                         trim = TRUE, reweigh = TRUE, evaluate = FALSE,n=6,
+                                         trim = TRUE, reweigh = TRUE, evaluate = TRUE,n=input$n_best,
                                          plot = FALSE, ref.cl = NULL, progress = TRUE)
     clus_gene_exp <- merge(heatmap1,diceR_result$clusters[,1],by="row.names")
     clus_gene_exp_final <- clus_gene_exp %>% .[order(.$y),] %>% set_rownames(.$Row.names) %>% dplyr::select(-Row.names)
@@ -236,7 +211,6 @@ shinyServer(function(input, output, session) {
           corr_database[unlist(Y)],
           xscale = TRUE,
           yscale = TRUE)
-    #Wilkscca<-Wilks(cca)
     yacca_Ftest <- F.test.cca(yacca_cancor)
     return (list(candisc_cca, yacca_cancor, yacca_Ftest))
   })
@@ -256,7 +230,7 @@ shinyServer(function(input, output, session) {
     datatable(
       data.frame(
         Corr = x$corr,
-        CanRSq = x$corr ^ 2,
+    #    CanRSq = x$corr ^ 2,
         Statistic = x$statistic,
         parameter = x$parameter,
         p.value = x$p.value,
@@ -264,8 +238,8 @@ shinyServer(function(input, output, session) {
       ) %>%
         set_colnames(
           c(
-            "Stand.Can.Corr.",
-            "Squared Can.Corr.",
+            "Canonical Correlation",
+            #"Squared Can.Corr.",
             "F",
             "Num df",
             "Den df",
@@ -279,7 +253,7 @@ shinyServer(function(input, output, session) {
         htmltools::hr('Table 1: Standardized Canonical Correlation Table')
       )
     ) %>%
-      formatRound(c(1:7), 3) %>%
+      formatRound(c(1:2,5), 3) %>%
       formatStyle(columns = c(1:7), 'text-align' = 'center')
   })
   #Render (2) a datatable of x canonical coefficient with yacca::cca
@@ -312,57 +286,7 @@ shinyServer(function(input, output, session) {
       formatRound(c(1:ncol(df)), 3) %>%
       formatStyle(columns = c(1:ncol(df)), 'text-align' = 'right')
   })
-  #Render (4) a datatable for standardized explained variance:
-  output$standexvar <- renderDataTable({
-    x <- cancorreact()[[2]]
-    sketch = htmltools::withTags(table(class = 'display',
-                                       # style = 'text-align: center;',
-                                       thead(tr(
-                                         th(
-                                           style = 'text-align: center;',
-                                           rowspan = 2,
-                                           'Canonical Variates'
-                                         ),
-                                         th(style = 'text-align: center;', colspan = 2, 'Gene Set 1 '),
-                                         th(style = 'text-align: center;', colspan = 2, 'Gene Set 2')
-                                       ),
-                                       tr(
-                                         lapply(rep(
-                                           c('Proportion (Own)', 'Proportion (Opposite)'), 2
-                                         ), th,
-                                         style = 'text-align: center;')
-                                       ))))
-    # x<-cancorreact()[[2]]
-    # vec<-c()
-    # sumxvrd<-0
-    # vec2<-c()
-    # sumxcanvad<-0
-    # for (i in 1:length(x$corr)){
-    #   sumxvrd<-x$xvrd[i]+sumxvrd
-    #   vec=c(vec,sumxvrd)
-    # }
-    # for (i in 1:length(x$corr)){
-    #   sumxcanvad<-x$xcanvad[i]+sumxcanvad
-    #   vec2=c(vec2,sumxcanvad)
-    # }
-    k <- length(x$corr)
-    
-    datatable(
-      df <- data.frame(
-        variates = paste("CV", 1:k),
-        own_can_va1 = x$xcanvad,
-        #sumcanvad=vec2,
-        opp_can_va1 = x$xvrd,
-        own_can_va2 = x$ycanvad,
-        opp_can_va2 = x$yvrd
-      ),
-      container = sketch,
-      rownames = FALSE
-    ) %>% formatRound(c(2:ncol(df)), 3) %>%
-      formatStyle(columns = c(1:ncol(df)), 'text-align' = 'center')
-    
-  })
-  #Render (5) cca plot
+  #Render (4) cca plot
   output$ccplot <- renderPlot({
     cca <- cancorreact()[[1]]
     par(mfrow = c(1, 3))
@@ -380,7 +304,7 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  ###################################### Tab/Module-- Multivariate Analysis#########################################################
+  ###################################### Tab/Module-- Cox Regression Survival Analysis#########################################################
   output$text3 <-
     renderText("Cox Proportional Hazards Model")
   # Step 1: To make the button reactive when clicked: calculatecox & sfreact
@@ -406,7 +330,6 @@ shinyServer(function(input, output, session) {
       Othergenes = input$Othergenes2
       TCGAname = rep("TCGA", 20028)
       medianSelected = median(TCGA$target_gene)
-      
       for (i in 1:172) {
         if (TCGA$target_gene[i] < medianSelected) {
           TCGA$Target_Gene_Stratified[i] = "LOW"
@@ -490,40 +413,7 @@ shinyServer(function(input, output, session) {
             data = TCGA,
             nk =3,
             n.impute = 10)}
-        # 
-        # tryCatch(
-        #   a <-
-        #       aregImpute(
-        #         as.formula(form_impute),
-        #         data = TCGA,
-        #        nk =3,
-        #         n.impute = 10
-        #       ),
-        #   
-        #   return(a <-
-        #            aregImpute(
-        #              as.formula(form_impute),
-        #              data = TCGA,
-        #              nk =0,
-        #              n.impute = 10))
-        #   
-        # , error = function(warning) {
-        #   message("My message is here!")
-        #   return(NA)}
-        #       )
-        #   return (a)
-        # }
-        # )
-        # 
-        # a <-
-        #   aregImpute(
-        #     as.formula(form_impute),
-        #     data = TCGA,
-        #    nk =3,
-        #     n.impute = 10
-        #   )
-        # print (a)
-        # do formula only for factor=0 or both:
+
         if (length(split_cont) == 0) {
           formu_new <- paste("Surv(Time_To_Event,Event)~",
                              paste(
@@ -581,8 +471,7 @@ shinyServer(function(input, output, session) {
               nonlist = c(nonlist, rownames(anov)[i - 1])
             }
           }
-          # print (rcslist)
-          # print (nonlist)
+
           ## add
           nonlist = list.append(nonlist, split_factor)
           ## final formula: three situations:
@@ -647,14 +536,10 @@ shinyServer(function(input, output, session) {
           print (gfit$formula)
           final_formu = gfit$formula
           noofrcs = grep("\\<rcs\\>", deparse(final_formu))
-          # rcslist=list()
-          # for (i in 0:noofrcs){
-          #   rcslist=list.append(gfit$Design$name[i],rcslist)
-          # }
+
         }
         else if (input$VariableSelection == "No selection") {
           final_formu = formu_new
-          # rcslist=rcslist
         }
       }
       
@@ -717,13 +602,7 @@ shinyServer(function(input, output, session) {
           }
           nonlist <- list.append(nonlist, split_factor)
           print (nonlist)
-          
-          
-          
-          #print (rcslist)
-          #print (length(rcslist[[1]]))
-          #nonlist=list.append(nonlist,)
-          # 2018/5/8: Stop here
+        
           
           ## final formula: three situations:
           if (length(nonlist[[1]]) == 0) {
@@ -782,11 +661,7 @@ shinyServer(function(input, output, session) {
               scope = list(lower = formu_new),
               k = 2
             )
-          ##20180427 stop here
-          #
-          #       if (is.null(fcph_fit)==TRUE){
-          #   final_formu="ERROR"
-          # }else {
+
           final_formu = fcph_fit$sformula
         }
         
@@ -876,11 +751,7 @@ shinyServer(function(input, output, session) {
         }
       }
     }
-    #assign variables to a list for prediction
-    # varlist<-list()
-    # for (i in 3:length(all.vars(final_formu))){
-    #   varlist<-list.append(varlist,all.vars(final_formu)[i])
-    # }
+
     print (final_formu)
     varlist <-
       list(all.vars(as.formula(final_formu))[3:length(all.vars(as.formula(final_formu)))])
@@ -949,21 +820,6 @@ shinyServer(function(input, output, session) {
           }
         }
       }
-      # for (i in 1:539) {
-      #   if (TCGA$target_gene[i] < medianSelected) {
-      #     TCGA$Target_Gene_Stratified[i] = "LOW"
-      #   }
-      #   else {
-      #     TCGA$Target_Gene_Stratified[i] = "HIGH"
-      #   }}
-      #
-      # if (input$Endpoint=="Time-to-recurrence"){
-      #   TCGA$Event=TCGA$recurrence
-      #   TCGA$Time_To_Event=TCGA$time_to_recurrence
-      # }
-      # else if (input$Endpoint=="Overall survival"){
-      #   TCGA$Event=TCGA$Event
-      #   TCGA$Time_To_Event=TCGA$Time_To_Event_TO_Event}
       dd <<- datadist(TCGA)
       options(datadist = 'dd')
       if (input$MissingDataImputation == "Multiple Imputation") {
@@ -1018,9 +874,6 @@ shinyServer(function(input, output, session) {
     input$coxcalc
     isolate({
       final_formu = sfreact()$final_formu
-      
-      # rcslist = sfreact()[[2]]
-      #print (rcslist)
       a = sfreact()$a
       varlist = sfreact()$varlist
       TCGA = calcultatecox()[[1]]
@@ -1141,16 +994,6 @@ shinyServer(function(input, output, session) {
           }
         }
       }
-      
-      
-      #
-      # if (input$Endpoint=="Time-to-recurrence"){
-      #   TCGA$Event=TCGA$recurrence
-      #   TCGA$Time_To_Event=TCGA$time_to_recurrence
-      # }
-      # else if (input$Endpoint=="Overall survival"){
-      #   TCGA$Event=TCGA$Event
-      #   TCGA$Time_To_Event=TCGA$Time_To_Event_TO_Event}
       dd <<- datadist(TCGA)
       options(datadist = 'dd')
       #survival estimates stratified on Race
@@ -1196,23 +1039,6 @@ shinyServer(function(input, output, session) {
                       " separated
                       by space"
                     ))
-    
-    #value = as.character(varlist[[1]][i])
-    #}
-    
-    #updateTextInput(session, "inText","Put your numbers")
-    #print (length(varlist[[1]]))
-    # for (i in 1:length(varlist[[1]])){
-    # updateTextInput(session, paste0("inText", i), label = "Variable", value = as.character(varlist[[1]][i]))}
-    #                                          #                   label = paste("Please enter a value:",varlist[[1]][i])))
-    # Can also set the label, this time for input$inText2
-    #   for (i in 1:length(varlist)){
-    #   updateTextInput(session, paste("inText",i),
-    #                   label = paste("Please enter a value:",varlist[[1]][i]))
-    # }
-    # df=setNames(data.frame(matrix(ncol = length(x), nrow = 0)), unlist(x))
-    # df[1,]=unlist(y)})
-    #})
   })
   output$Predplot2 <- renderPlot({
     input$coxcalc
@@ -1310,7 +1136,7 @@ shinyServer(function(input, output, session) {
       )
     })
   })
-  ###################################### Tab/Module-- Univariate Analysis#########################################################
+  ###################################### Tab/Module-- Survival Tree#########################################################
   ## Step 1 Load data and : (There're two plot, so we need to have a reactive function)
   calcultate_uni <-eventReactive(input$Uni_cox,
                                 isolate({if (input$Databases == "TCGA GBM RNA-Seq") {

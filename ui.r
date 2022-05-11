@@ -4,8 +4,8 @@ shinyUI(
              fluid = TRUE, 
              
              source("tabs/CorrelationTab.r", local = TRUE)$value,
-             source("tabs/MultivariableTab.r", local = TRUE)$value,
-             source("tabs/UnivariableTab.r", local = TRUE)$value
+             source("tabs/CoxRegressionTab.r", local = TRUE)$value,
+             source("tabs/SurvivalTreeTab.r", local = TRUE)$value
              
   )
 )
