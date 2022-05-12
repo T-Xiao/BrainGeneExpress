@@ -230,20 +230,13 @@ shinyServer(function(input, output, session) {
     datatable(
       data.frame(
         Corr = x$corr,
-    #    CanRSq = x$corr ^ 2,
-        Statistic = x$statistic,
-        parameter = x$parameter,
         p.value = x$p.value,
         signficance = signif
       ) %>%
         set_colnames(
           c(
             "Canonical Correlation",
-            #"Squared Can.Corr.",
-            "F",
-            "Num df",
-            "Den df",
-            "Pr(>F)",
+            "P-value",
             "Sig. Level"
           )
         ),
@@ -253,7 +246,7 @@ shinyServer(function(input, output, session) {
         htmltools::hr('Table 1: Standardized Canonical Correlation Table')
       )
     ) %>%
-      formatRound(c(1:2,5), 3) %>%
+      formatRound(c(1:2), 3) %>%
       formatStyle(columns = c(1:7), 'text-align' = 'center')
   })
   #Render (2) a datatable of x canonical coefficient with yacca::cca
