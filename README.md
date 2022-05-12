@@ -18,8 +18,8 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 > > (1.2) One vs All: Correlations of the chosen gene and all genes are calculated and sorted. The n (user can determine n) most correlated genes will be clustered and displayed in heatmap. <br/>
 > > (1.3) Two sets: Canonical correlations will be calculated for <br/> 
 
-> (2) Multivariate analysis:<br/>
->(3) Univariate analysis: 
+> (2) Cox Regression:<br/>
+>(3) Survival Tree: 
 
 
 
