@@ -62,9 +62,7 @@ shinyServer(function(input, output, session) {
     selectInput("hc_method","Select agglomeration method",c("ward.D", "ward.D2", "single", "complete", "average","mcquitty" , "median", "centroid" )),
     selectInput("nk_range","Select range of clusters",c("2 to 7","2 to 8","2 to 9","2 to 10")),
     selectInput("n_best","Select the top n algorithms to keep after trimming off the poor performing ones using Rank Aggregation",c(rep(1:8,1))))
-    #                                     # sliderInput("cut_off_number","Please select the cut-off number of genes:",min = 0, max = 500,
-    #                                     #             value = c(0,100))),
-  })
+   })
   #      2.3 Two sets correlation dataset user input (three inputs):
   output$twosetone = renderUI({
     mydata = datasetInput()
@@ -107,7 +105,6 @@ shinyServer(function(input, output, session) {
     ngenelist = length(unlist(many_gene))
     plotgene = vector("list", length = ngenelist)
     for (i in 1:ngenelist) {
-      #local({
       gene_name = unlist(many_gene)[i]
       print(gene_name)
       pp <<-
@@ -118,7 +115,6 @@ shinyServer(function(input, output, session) {
         ylab(one_gene) +
         xlab(gene_name) +
         geom_cor(method = "pearson", ypos = 1e5) 
-
       plotgene[[i]] = pp
     }
     plotgene
@@ -296,7 +292,6 @@ shinyServer(function(input, output, session) {
       plot(cca, which = strtoi(input$canodim[1]))
     }
   })
-  
   ###################################### Tab/Module-- Cox Regression Survival Analysis#########################################################
   output$text3 <-
     renderText("Cox Proportional Hazards Model")
@@ -768,7 +763,6 @@ shinyServer(function(input, output, session) {
       final_formu = sfreact()$final_formu
       a = sfreact()$a
       varlist = sfreact()$varlist
-      #validate( need(input$VariableSelection =="No selection","No variable left after model selection!") )
       TCGA = calcultatecox()[[1]]
       TCGA$target_gene = calcultatecox()[[2]]
       medianSelected = median(TCGA$target_gene)
@@ -802,7 +796,6 @@ shinyServer(function(input, output, session) {
         targetname = input$Multigene3
         Othergenes = input$Othergenes3
         TCGAname = rep("TCGA", 17814)
-        
         medianSelected = median(TCGA$target_gene)
         for (i in 1:585) {
           if (TCGA$target_gene[i] < medianSelected) {
@@ -844,7 +837,6 @@ shinyServer(function(input, output, session) {
       for (i in seq(1, noofvariables, 2)) {
         variablelist = c(variablelist, rownames(ssf)[i])
       }
-      
       #Hazard ratio
       finaldf = as.data.frame(matrix(ncol = 5, nrow = (noofvariables / 2)))
       colnames(finaldf) = c("Parameters",
@@ -870,15 +862,12 @@ shinyServer(function(input, output, session) {
       a = sfreact()$a
       varlist = sfreact()$varlist
       TCGA = calcultatecox()[[1]]
-      #print (TCGA[,1])
       TCGA$target_gene = calcultatecox()[[2]]
-      #TCGA$target_gene = calcultatecox()
       if (input$Database == "TCGA GBM RNA-Seq") {
         targetname = input$Multigene2
         Othergenes = input$Othergenes2
         TCGAname = rep("TCGA", 20028)
         medianSelected = median(TCGA$target_gene)
-        
         for (i in 1:172) {
           if (TCGA$target_gene[i] < medianSelected) {
             TCGA$Target_Gene_Stratified[i] = "LOW"
@@ -943,13 +932,11 @@ shinyServer(function(input, output, session) {
       #print (TCGA[,1])
       TCGA$target_gene = calcultatecox()[[2]]
       medianSelected = median(TCGA$target_gene)
-      
       if (input$Database == "TCGA GBM RNA-Seq") {
         targetname = input$Multigene2
         Othergenes = input$Othergenes2
         TCGAname = rep("TCGA", 20028)
         medianSelected = median(TCGA$target_gene)
-        
         for (i in 1:172) {
           if (TCGA$target_gene[i] < medianSelected) {
             TCGA$Target_Gene_Stratified[i] = "LOW"
