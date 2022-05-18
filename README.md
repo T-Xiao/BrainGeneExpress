@@ -35,10 +35,6 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 * Download R: Mac -- https://cran.r-project.org/bin/macosx/
 * Download RStudio Desktop: https://www.rstudio.com/products/rstudio/download/
 
-## Authors
-
-Ting Xiao
-
 ## Version History
 
 * Initial Release
