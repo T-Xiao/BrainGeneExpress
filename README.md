@@ -14,13 +14,12 @@ An RShiny app for quick analysis of Brain Tumor public datasets
 > TCGA - The Cancer Genome Atlas;  GBM - Glioblastoma; LGG - Low Grade Glioma<br/>
 * Modules include: 
 > (1) Correlation: <br/> 
-> > (1.1) One vs Many: Pearson Correlations between one gene and several other genes of choice. Correlation plots will be shown as several one-on-one correlations. <br/>
+> > (1.1) One vs Many: Pearson correlations between one gene and several other genes of choice. Correlation plots will be shown as several one-on-one correlations. <br/>
 > > (1.2) One vs All: Correlations of the chosen gene and all genes are calculated and sorted. The n (user can determine n) most correlated genes will be clustered and displayed in heatmap. <br/>
 > > (1.3) Two sets: Canonical correlations will be calculated for <br/> 
 
-> (2) Cox Regression:<br/>
->(3) Survival Tree: 
-
+> (2) Cox Regression: Cox regression with the choice of different features, including target gene (continuous or binary), clinical factors and other genes; with the choice of restricted cubic spline (for non-linear cases for continuous features), multiple imputation for missing data,   <br/>
+> (3) Survival Tree: 
 
 
 ## Getting Started
